@@ -66,7 +66,7 @@ ui <- fluidPage(
   #   background = "#112446"
   # ),
   # background = "#008B8B"
-  # background = "#008080"
+
   
   
   
