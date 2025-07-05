@@ -27,7 +27,7 @@ library(TwoSampleMR) # 0.6.8
 # Load data----
 # load("D:/All OneDrive/Doctorado/Postdoc/Lipoproteins - metabolomics/Shiny app/App/Data.RData") # previous
 # load("F:/All OneDrive/Doctorado/Postdoc/Lipoproteins - metabolomics/Shiny app/Data_250430.RData") # new
-load("Data.RData")
+load("Data_250430.RData")
 
 
 
