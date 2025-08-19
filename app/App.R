@@ -11,7 +11,6 @@ library(tidyverse) # 2.0.0
 library(shinyFeedback) # 0.4.0
 library(circlize) # 0.4.16
 library(ComplexHeatmap) # 2.21.1
-library(shinybusy) # 0.3.3
 library(TwoSampleMR) # 0.6.8
 
 
