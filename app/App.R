@@ -3488,7 +3488,7 @@ server <- function(input, output, session) {
       "Supplemental Files 1-8.7z"
     },
     content=function(file) {
-      file.copy("Supplemental FIles 1-8.7z", file)
+      file.copy("Supplemental Files 1-8.7z", file)
     }
   )
   
