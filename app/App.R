@@ -4,13 +4,14 @@
 
 # Load packages----
 library(shiny) # 1.9.1
-library(bslib) # 0.8.0
+library(bslib) #
 library(reactable) # 0.4.4
 library(rio) # 1.2.3
 library(tidyverse) # 2.0.0
 library(shinyFeedback) # 0.4.0
 library(circlize) # 0.4.16
 library(ComplexHeatmap) # 2.21.1
+library(shinybusy) # 0.3.3
 library(TwoSampleMR) # 0.6.8
 
 
@@ -124,7 +125,7 @@ ui <- fluidPage(
                          
                          tabPanel(title = "Observational analyses",
                                   
-                                  
+
                                   p(""),
                                   tags$span(style = "color:#c24700; font-size:14pt", "Results for Clinically measured HDL/LDL") ,
                                   p(""),
@@ -478,18 +479,12 @@ ui <- fluidPage(
                                                                              placeholder = '' ) )          ,  style="display:inline-block"),
                                     tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     
-                                    tags$div(  actionButton("button_obs_hdl_ldl_plot", "Plot!", style = 'margin-top:0px') ,  style="display:inline-block"),
                                     
                                     
-                                    
-                                    
-                                    tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     tags$div(  uiOutput("download.button.obs.plot_hdl_ldl") ,  style="display:inline-block"),
                                     tags$div(  uiOutput("download.button.obs.plot.data_hdl_ldl") ,  style="display:inline-block"),
                                     
                                     
-                                    # br(),
-                                    # br(),
                                     
                                     tags$div(  plotOutput("heatmap_obs_hdl_ldl") , style = "display:block;"   )
                                     
@@ -535,20 +530,15 @@ ui <- fluidPage(
                                                                              placeholder = '' ) )          ,  style="display:inline-block"),
                                     tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     
-                                    tags$div(  actionButton("button_mr_hdl_ldl_plot", "Plot!", style = 'margin-top:0px;') ,  style="display:inline-block"),
                                     
                                     
                                     
-                                    
-                                    
-                                    tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     tags$div(  uiOutput("download.button.mr.plot_hdl_ldl") ,  style="display:inline-block"),
                                     tags$div(  uiOutput("download.button.mr.plot.data_hdl_ldl") ,  style="display:inline-block"),
                                     
                                     
                                     
-                                    br(),
-                                    br(),
+                                    
                                     
                                     tags$div( plotOutput("heatmap_mr_hdl_ldl") , style = "display:block;" )
                                     
@@ -605,18 +595,12 @@ ui <- fluidPage(
                                                                              placeholder = '' ) )          ,  style="display:inline-block"),
                                     tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     
-                                    tags$div(  actionButton("button_obs_plot", "Plot!", style = 'margin-top:0px') ,  style="display:inline-block"),
                                     
                                     
-                                    
-                                    
-                                    tags$div( tags$div("") , style="display:inline-block; width: 70px;"  ),
                                     tags$div(  uiOutput("download.button.obs.plot") ,  style="display:inline-block"),
                                     tags$div(  uiOutput("download.button.obs.plot.data") ,  style="display:inline-block"),
                                     
                                     
-                                    br(),
-                                    br(),
                                     
                                     tags$div(  plotOutput("heatmap_obs") , style = "display:block;"   )
                                     
@@ -645,7 +629,26 @@ ui <- fluidPage(
               p(""),
               p(""),
               
-              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 1."), "Description of the 13 measured lipoproteins used in Observational analyses.") ),
+              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 1."), "Baseline characteristics of study participants from SCAPIS, EpiHealth, POEM and PIVUS studies. Means and (SD) are given, or proportions in %.") ),
+              
+              # Supplementary 4; table render and download botton
+              fluidRow(
+                column(12,
+                       reactableOutput("table_supp4"),
+                       shiny::downloadButton(
+                         "downloadData_4", "Download",
+                         onClick = "Shiny.setInputValue('table_state:to_csv', Reactable.getState('table_supp4').sortedData)"
+                       )
+                )
+              ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 2."), "Description of the 13 measured lipoproteins used in Observational analyses.") ),
               
               # Supplementary 1; table render and download botton
               fluidRow(
@@ -665,25 +668,7 @@ ui <- fluidPage(
               p(""),
               p(""),
               
-              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 2."), "Description of the genetic instruments of lipoproteins' levels used for the Mendelian Randomization analyses.") ),
               
-              # Supplementary 2; table render and download botton
-              fluidRow(
-                column(12,
-                       reactableOutput("table_supp2"),
-                       # tableOutput("test"),
-                       
-                       shiny::downloadButton(
-                         "downloadData_2", "Download",
-                         onClick = "Shiny.setInputValue('table_state:to_csv', Reactable.getState('table_supp2').sortedData)"
-                       )
-                )
-              ),
-              
-              p(""),
-              p(""),
-              p(""),
-              p(""),
               
               p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 3."), "Description of the 790 non-xenobiotic metabolites analysed in the study.") ),
               
@@ -704,15 +689,19 @@ ui <- fluidPage(
               p(""),
               p(""),
               
-              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 4."), "Baseline characteristics of study participants from SCAPIS, EpiHealth, POEM and PIVUS studies. Means and (SD) are given, or proportions in %.") ),
               
-              # Supplementary 4; table render and download botton
+             
+              p( tags$span(style = "font-size:17px", tags$b("Supplementary Table 4."), "Description of the genetic instruments of lipoproteins' levels used for the Mendelian Randomization analyses.") ),
+              
+              # Supplementary 2; table render and download botton
               fluidRow(
                 column(12,
-                       reactableOutput("table_supp4"),
+                       reactableOutput("table_supp2"),
+                       # tableOutput("test"),
+                       
                        shiny::downloadButton(
-                         "downloadData_4", "Download",
-                         onClick = "Shiny.setInputValue('table_state:to_csv', Reactable.getState('table_supp4').sortedData)"
+                         "downloadData_2", "Download",
+                         onClick = "Shiny.setInputValue('table_state:to_csv', Reactable.getState('table_supp2').sortedData)"
                        )
                 )
               ),
@@ -722,9 +711,107 @@ ui <- fluidPage(
               p(""),
               p(""),
               
-              p( tags$span(style = "font-size:17px", tags$b("Supplemental Files 1-8") ) ),
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 1. Description of GWAS consortiums used for each phenotype.") ) ),
               # p(""),
-              fluidRow(column(6, downloadButton("statFile", "Download" ) ) )
+              fluidRow(column(6, downloadButton("statFile_1", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 2. Plasma metabolites associated with either HDL or LDL cholesterol, and with both HDL and LDL cholesterol in Observational analysis.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_2", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 3. Plasma metabolites associated with either HDL or LDL cholesterol, and with both HDL and LDL cholesterol in Mendelian randomization.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_3", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 4. Plasma metabolites associated uniquely with either HDL or LDL cholesterol, or with both HDL and LDL cholesterol in both Observational and Mendelian randomization analyses.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_4", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 5. Forest plot of the top 3 associations in each metabolic super- and sub-pathway.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_5", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 6. Forest plot of the top 10 metabolites associated with each cholesterol concentration or lipoprotein.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_6", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 7. Upset plot of the associations between lipoprotein subclasses and plasma metabolites in Observational analysis.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_7", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 8. Associations between lipoprotein subclasses and plasma metabolites in Observational analysis by groups of lipoprotein subclasses.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_8", "Download" ) ) ),
+              
+              p(""),
+              p(""),
+              p(""),
+              p(""),
+              
+              
+              
+              
+              p( tags$span(style = "font-size:17px", tags$b("Supplemental File 9. Metabolites associated with both HDL and LDL cholesterol concentrations in both Observational and Mendelian randomization analyses which are also associated with CVD.") ) ),
+              # p(""),
+              fluidRow(column(6, downloadButton("statFile_9", "Download" ) ) )
+              
               
               
     ), # end nav_panel Downloads
@@ -1255,15 +1342,15 @@ server <- function(input, output, session) {
     
     
     df5 <- harmonised_df_hdl_ldl[ which( ( harmonised_df_hdl_ldl$exposure %in% c( input$protein_mr_hdl_ldl ) ) &  harmonised_df_hdl_ldl$outcome %in% c(input$metabolite_mr_hdl_ldl) ), ]
-    
+
     mr_df <- mr( df5 , method_list = c("mr_ivw", "mr_egger_regression", "mr_weighted_median") )
     
     mr_df <- mr_df %>% left_join(met_anno[c("Metabolite", "Super pathway", "Sub pathway")], join_by("outcome" == "Metabolite"))
     
     mr_df <- mr_df %>% left_join(fdr_df_hdl_ldl[which(fdr_df_hdl_ldl$exposure %in% c(input$protein_mr_hdl_ldl) & fdr_df_hdl_ldl$outcome %in% c(input$metabolite_mr_hdl_ldl) ), c("method", "FDR-adjusted p-value")], join_by("method" == "method"))
-    
+
     mr_df <- mr_df %>% left_join(heterogeneity_hdl_ldl[which(heterogeneity_hdl_ldl$exposure %in% c(input$protein_mr_hdl_ldl) & heterogeneity_hdl_ldl$outcome %in% c(input$metabolite_mr_hdl_ldl) ), c("method", "Q", "Q_pval")], join_by("method" == "method"))
-    
+
     mr_df <- mr_df[c("exposure", "Super pathway", "Sub pathway", "outcome", "method", "nsnp", "b", "se", "pval", "FDR-adjusted p-value", "Q", "Q_pval")]
     
     colnames(mr_df) <- c("Lipoprotein", "Super pathway", "Sub pathway", "Metabolite", "Method", "Number of SNPs", "Beta", "SE", "Nominal p-value", "FDR-adjusted p-value", "Q statistic", "Q statistic - p-value")
@@ -1353,9 +1440,9 @@ server <- function(input, output, session) {
                   `FDR-adjusted p-value` = colDef(minWidth = 50,
                                                   cell = function(value) format(value, digits = 3, scientific = TRUE ) ),
                   `Q statistic` = colDef(minWidth = 50,
-                                         cell = function(value) format(value, digits = 3, scientific = TRUE ) ),
+                                                  cell = function(value) format(value, digits = 3, scientific = TRUE ) ),
                   `Q statistic - p-value` = colDef(minWidth = 50,
-                                                   cell = function(value) format(value, digits = 3, scientific = TRUE ) )
+                                                  cell = function(value) format(value, digits = 3, scientific = TRUE ) )
                 ),
                 defaultPageSize = 5,
                 showPageSizeOptions = FALSE,
@@ -1627,8 +1714,8 @@ server <- function(input, output, session) {
   
   
   
-    observeEvent(input$button_obs_hdl_ldl_plot,{
-      # observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot), {# To take plot and its dimensions outside of the reactive, to save it
+  
+  observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot), {# To take plot and its dimensions outside of the reactive, to save it
     
     req( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot)  )
     
@@ -1655,23 +1742,21 @@ server <- function(input, output, session) {
   )
   
   
-    observeEvent(input$button_obs_hdl_ldl_plot,{
-      
-    # observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot), {# To take plot and its dimensions outside of the reactive, to save it
+  
+  observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot), {# To take plot and its dimensions outside of the reactive, to save it
     
     req( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot)  )
     
-    files_names <<- ifelse(length(input$protein_obs_hdl_ldl_plot) > 1, 
-                           paste0(input$protein_obs_hdl_ldl_plot[1], "_", input$protein_obs_hdl_ldl_plot[2]),
-                           input$protein_obs_hdl_ldl_plot)
-    
+  files_names <<- ifelse(length(input$protein_obs_hdl_ldl_plot) > 1, 
+                         paste0(input$protein_obs_hdl_ldl_plot[1], "_", input$protein_obs_hdl_ldl_plot[2]),
+                         input$protein_obs_hdl_ldl_plot)
+  
   }
   )
   
+
   
-  
-    ht_obs_hdl_ldl <-   observeEvent(input$button_obs_hdl_ldl_plot,{
-    # ht_obs_hdl_ldl <- observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
+  ht_obs_hdl_ldl <- observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
     
     req( isTruthy( input$pathway_obs_hdl_ldl_plot != "" & !is.null(input$protein_obs_hdl_ldl_plot) & input$boolean_obs_hdl_ldl_plot == "AND" ) ||
            isTruthy( (input$pathway_obs_hdl_ldl_plot != "" & is.null(input$protein_obs_hdl_ldl_plot)) & input$boolean_obs_hdl_ldl_plot == "ONLY" )  ||
@@ -1920,8 +2005,8 @@ server <- function(input, output, session) {
   
   
   
-    observeEvent(input$button_obs_hdl_ldl_plot,{
-    # observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
+  
+  observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
     
     req( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot)  && input$boolean_obs_hdl_ldl_plot == "AND"  )
     
@@ -1980,8 +2065,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_obs_hdl_ldl_plot,{
-  # observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
+  
+  observeEvent( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot) ,{
     
     req( isTruthy(input$pathway_obs_hdl_ldl_plot) && isTruthy(input$protein_obs_hdl_ldl_plot)  && input$boolean_obs_hdl_ldl_plot == "AND"  )
     
@@ -2088,8 +2173,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_mr_hdl_ldl_plot,{
-  # observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) , {
+  
+  observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) , {
     
     
     req( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot)  )
@@ -2120,14 +2205,14 @@ server <- function(input, output, session) {
   )
   
   
-  observeEvent(input$button_mr_hdl_ldl_plot,{
-  # observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) , {
+  
+  observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) , {
     
     req( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot)  )
     
     files_names_obs_mr <<- ifelse(length(input$protein_mr_hdl_ldl_plot) > 1, 
-                                  paste0(input$protein_mr_hdl_ldl_plot[1], "_", input$protein_mr_hdl_ldl_plot[2]),
-                                  input$protein_mr_hdl_ldl_plot)
+                           paste0(input$protein_mr_hdl_ldl_plot[1], "_", input$protein_mr_hdl_ldl_plot[2]),
+                           input$protein_mr_hdl_ldl_plot)
     
   }
   )
@@ -2138,8 +2223,7 @@ server <- function(input, output, session) {
   
   
   # ht_mr_hdl_ldl <- observeEvent( input$button_mr_hdl_ldl_plot ,{
-  ht_mr_hdl_ldl <- observeEvent(input$button_mr_hdl_ldl_plot,{
-  # ht_mr_hdl_ldl <- observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
+  ht_mr_hdl_ldl <- observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
     
     req( isTruthy( input$pathway_mr_hdl_ldl_plot != "" & !is.null(input$protein_mr_hdl_ldl_plot) & input$boolean_mr_hdl_ldl_plot == "AND" ) ||
            isTruthy( (input$pathway_mr_hdl_ldl_plot != "" & is.null(input$protein_mr_hdl_ldl_plot)) & input$boolean_mr_hdl_ldl_plot == "ONLY" )  ||
@@ -2397,8 +2481,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_mr_hdl_ldl_plot,{
-  # observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
+  # observeEvent(input$button_mr_hdl_ldl_plot,{
+  observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
     
     req( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot)  && input$boolean_mr_hdl_ldl_plot == "AND"  )
     
@@ -2456,8 +2540,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent( input$button_mr_hdl_ldl_plot ,{
-  # observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
+  # observeEvent( input$button_mr_hdl_ldl_plot ,{
+  observeEvent( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot) ,{
     
     req( isTruthy(input$pathway_mr_hdl_ldl_plot) && isTruthy(input$protein_mr_hdl_ldl_plot)  && input$boolean_mr_hdl_ldl_plot == "AND"  )
     
@@ -2846,7 +2930,7 @@ server <- function(input, output, session) {
   
   
   
-  
+
   # Heatmap page starts
   
   
@@ -2893,8 +2977,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_obs_plot,{
-  # observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot), {# To take plot and its dimensions outside of the reactive, to save it
+  
+  observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot), {# To take plot and its dimensions outside of the reactive, to save it
     
     req( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot)  )
     
@@ -2921,14 +3005,14 @@ server <- function(input, output, session) {
   )
   
   
-  observeEvent(input$button_obs_plot,{
-  # observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot), {# To take plot and its dimensions outside of the reactive, to save it
+  
+  observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot), {# To take plot and its dimensions outside of the reactive, to save it
     
     req( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot)  )
     
     files_names_obs_lipoprot <<- ifelse(length(input$protein_obs_plot) > 1, 
-                                        paste0(input$protein_obs_plot[1], "_", input$protein_obs_plot[2]),
-                                        input$protein_obs_plot)
+                                  paste0(input$protein_obs_plot[1], "_", input$protein_obs_plot[2]),
+                                  input$protein_obs_plot)
     
   }
   )
@@ -2938,8 +3022,8 @@ server <- function(input, output, session) {
   
   
   
-  ht_obs <- observeEvent(input$button_obs_plot,{
-  # ht_obs <- observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
+  # ht_obs <- observeEvent(input$button_obs_plot,{
+  ht_obs <- observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
     
     req( isTruthy( input$pathway_obs_plot != "" & !is.null(input$protein_obs_plot) & input$boolean_obs_plot == "AND" ) ||
            isTruthy( (input$pathway_obs_plot != "" & is.null(input$protein_obs_plot)) & input$boolean_obs_plot == "ONLY" )  ||
@@ -3189,8 +3273,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_obs_plot,{
-  # observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
+  # observeEvent(input$button_obs_plot,{
+  observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
     
     req( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot)  && input$boolean_obs_plot == "AND"  )
     
@@ -3249,8 +3333,8 @@ server <- function(input, output, session) {
   
   
   
-  observeEvent(input$button_obs_plot,{
-  # observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
+  
+  observeEvent( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot) ,{
     
     req( isTruthy(input$pathway_obs_plot) && isTruthy(input$protein_obs_plot)  && input$boolean_obs_plot == "AND"  )
     
@@ -3303,7 +3387,7 @@ server <- function(input, output, session) {
   
   
   
-  
+
   
   
   # Download page start
@@ -3381,9 +3465,9 @@ server <- function(input, output, session) {
                                    filterable = FALSE,
                                    searchable = TRUE ),
                 `F-statistic` = colDef(minWidth = 80,
-                                       cell = function(value) format(value, digits = 2, scientific = TRUE ),
-                                       filterable = FALSE,
-                                       searchable = TRUE)
+                                cell = function(value) format(value, digits = 2, scientific = TRUE ),
+                                filterable = FALSE,
+                                searchable = TRUE)
               ),
               defaultPageSize = 5,
               showPageSizeOptions = TRUE,
@@ -3482,13 +3566,87 @@ server <- function(input, output, session) {
   
   
   
-  # Download Annex
-  output$statFile <- downloadHandler(
+  # Download files
+  output$statFile_1 <- downloadHandler(
     filename = function() {
-      "Supplemental Files 1-8.7z"
+      "Supplemental File 1.7z"
     },
     content=function(file) {
-      file.copy("Supplemental Files 1-8.7z", file)
+      file.copy("Supplemental File 1.7z", file)
+    }
+  )
+  
+  
+  output$statFile_2 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 2.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 2.7z", file)
+    }
+  )
+  output$statFile_3 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 3.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 3.7z", file)
+    }
+  )
+  
+  
+  output$statFile_4 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 4.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 4.7z", file)
+    }
+  )
+  output$statFile_5 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 5.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 5.7z", file)
+    }
+  )
+  
+  
+  output$statFile_6 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 6.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 6.7z", file)
+    }
+  )
+  output$statFile_7 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 7.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental File 7.7z", file)
+    }
+  )
+  
+  
+  output$statFile_8 <- downloadHandler(
+    filename = function() {
+      "Supplemental File 8.7z"
+    },
+    content=function(file) {
+      file.copy("Supplemental file 8.7z", file)
+    }
+  )
+  
+  
+  output$statFile_9 <- downloadHandler(
+    filename = function() {
+      paste0("Supplemental File 9.7z")
+    },
+    content=function(file) {
+      file.copy("Supplemental File 9.7z", file)
     }
   )
   
