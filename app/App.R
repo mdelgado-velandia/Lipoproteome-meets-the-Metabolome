@@ -3441,7 +3441,7 @@ server <- function(input, output, session) {
   
   output$downloadData_1 <- downloadHandler(
     filename = function() {
-      paste("SuppTable1_", Sys.Date(), ".csv", sep = "")
+      paste("SuppTable2.csv")
     },
     content = function(file) {
       data <- input$table_state
@@ -3497,7 +3497,7 @@ server <- function(input, output, session) {
   
   output$downloadData_2 <- downloadHandler(
     filename = function() {
-      paste("SuppTable2_", Sys.Date(), ".csv", sep = "")
+      paste("SuppTable4.csv")
     },
     content = function(file) {
       data <- input$table_state
@@ -3534,7 +3534,7 @@ server <- function(input, output, session) {
   
   output$downloadData_3 <- downloadHandler(
     filename = function() {
-      paste("SuppTable3_", Sys.Date(), ".csv", sep = "")
+      paste("SuppTable3.csv")
     },
     content = function(file) {
       data <- input$table_state
@@ -3572,7 +3572,7 @@ server <- function(input, output, session) {
   
   output$downloadData_4 <- downloadHandler(
     filename = function() {
-      paste("SuppTable4_", Sys.Date(), ".csv", sep = "")
+      paste("SuppTable1.csv")
     },
     content = function(file) {
       data <- input$table_state
