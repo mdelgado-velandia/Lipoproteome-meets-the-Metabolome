@@ -23,8 +23,7 @@ library(TwoSampleMR) # 0.6.8
 
 
 # Load data----
-# load("F:/All OneDrive/Doctorado/Postdoc/Lipoproteins - metabolomics/Right allele/App without MR subclasses/Data_250810.RData")
-load("F:/All OneDrive/Doctorado/Postdoc/Lipoproteins - metabolomics/Right allele/App without MR subclasses/Data_250816_str.RData")
+load("Data_250816_str.RData")
 
 
 
